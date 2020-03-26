@@ -66,14 +66,13 @@ RUN apt-get install -y --no-install-recommends g++ libfreetype6-dev libpng-dev l
 RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.5 1
 RUN update-alternatives --set python /usr/bin/python3.5
 #RUN python --version
-#ADD http://www.sachse.embl.de/emspring/_download/spring-0.86.1661-linux.tar.gz ~/
+ADD http://www.sachse.embl.de/emspring/_download/spring-0.86.1661-linux.tar.gz ~/
 
-#WORKDIR ~
-#RUN tar xvf spring-0.86.1661-linux.tar.gz
-#WORKDIR spring_v0-86-1661
-#RUN sh -u patches/binary_install_linux.sh  ../install_fix180416.patch
-#RUN sh patches/binary_install_linux.sh
-#RUN cd ${STARTUPDIR}
+WORKDIR ~
+RUN tar xvf spring-0.86.1661-linux.tar.gz
+WORKDIR spring_v0-86-1661
+RUN sh -u patches/binary_install_linux.sh  ../install_fix180416.patch
+RUN sh patches/binary_install_linux.sh
 
 USER 1000
 
