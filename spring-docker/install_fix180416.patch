@@ -1,0 +1,74 @@
+--- binary_install_linux.sh	2018-04-16 08:49:45.000000000 +0200
++++ short_install.sh	2018-04-16 08:54:15.000000000 +0200
+@@ -1,8 +1,8 @@
+ #!/bin/sh
+ #author: Carsten Sachse
+-#date: 12-Jul-2017
+-#version: 0.2    
+-#usage: sh binary_install_linux.sh
++#date: 16-Apr-2018
++#version: 0.3
++#usage: sh binary_install_linux.sh patched to fix SSL connection issues
+ clear
+ echo '=================================================================================='
+ echo ' ---------------------- Running binary_install_linux.sh --------------------------'
+@@ -29,45 +29,26 @@
+ rm -rf include
+ rm -rf lib-old
+ 
+-echo '--------------------------------------------------------------------------------'
+-echo '1. Re-install pip'
+-echo '--------------------------------------------------------------------------------'
+ PYTHONPATH=$PWD/lib/python2.7/site-packages LD_LIBRARY_PATH=$PWD/parts/EMAN2/lib \
+  ./parts/EMAN2/Python/bin/python patches/virtualenv.py --no-site-packages .
+ 
+-cd patches; wget https://bootstrap.pypa.io/get-pip.py; cd ..
+-
+-PYTHONPATH=$PWD/lib/python2.7/site-packages LD_LIBRARY_PATH=$PWD/parts/EMAN2/lib \
+-./bin/python patches/get-pip.py -U 
+-
+-echo '--------------------------------------------------------------------------------'
+-echo '2. Re-install latest setuptools'
+-echo '--------------------------------------------------------------------------------'
+-PYTHONPATH=$PWD/lib/python2.7/site-packages LD_LIBRARY_PATH=$PWD/parts/EMAN2/lib \
+-./bin/pip install -U pip setuptools 
+-
+-echo '--------------------------------------------------------------------------------'
+-echo '3. Reinstate virtualenv and buildout environement'
+-echo '--------------------------------------------------------------------------------'
+-PYTHONPATH=$PWD/lib/python2.7/site-packages LD_LIBRARY_PATH=$PWD/parts/EMAN2/lib \
+-./parts/EMAN2/Python/bin/python patches/virtualenv.py --no-site-packages .
+-
+ PYTHONPATH=$PWD/lib/python2.7/site-packages LD_LIBRARY_PATH=$PWD/parts/EMAN2/lib \
+ ./bin/python bootstrap.py
+ 
+ grep -v 'develop = develop-eggs/spring-dev' buildout_linux.cfg > buildout.cfg
+ 
+ echo '--------------------------------------------------------------------------------'
+-echo '4. Install latest Python dependencies for Spring'
++echo 'Fetch and install emspring'
+ echo '--------------------------------------------------------------------------------'
+-rm -rf $PWD/parts/EMAN2/Python/lib/python2.7/site-packages/matplotlib*
++PYTHONPATH=$PWD/lib/python2.7/site-packages LD_LIBRARY_PATH=$PWD/parts/EMAN2/lib \
++./bin/easy_install http://www.sachse.embl.de/emspring/_download/emspring-0.86.1661.tar.gz
+ 
+ PYTHONPATH=$PWD/lib/python2.7/site-packages LD_LIBRARY_PATH=$PWD/parts/EMAN2/lib \
+-./bin/buildout -N install springpython
++./bin/buildout -No install springpython
+ 
+ if [ ! -d ~/.python-eggs ]; then
+-	mkdir ~/.python-eggs
+-	chmod og-w ~/.python-eggs
++    mkdir ~/.python-eggs
++    chmod og-w ~/.python-eggs
+ fi
+ 
+ echo '----------------------------------------------------------------------------------'
+@@ -85,4 +66,5 @@
+ echo "echo setenv PATH:${PWD}/bin:\$PATH >> ~/.cshrc"
+ echo 'or your favorite Bourne shell rc file (e.g. .bashrc, .zshrc):'
+ echo "echo export PATH:${PWD}/bin:\$PATH >> ~/.bashrc"
+-echo '=================================================================================='
+\ No newline at end of file
++echo '=================================================================================='
++
